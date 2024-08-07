@@ -1,20 +1,23 @@
-import json
-import os
-
 class Phonebook:
-    def __init__(self, filename='phonebook.json'):
+    def __init__(self, filename='phonebook.txt'):
         self.filename = filename
         self.phonebook = self.load_phonebook()
 
     def load_phonebook(self):
-        if os.path.exists(self.filename):
+        phonebook = {}
+        try:
             with open(self.filename, 'r') as file:
-                return json.load(file)
-        return {}
+                for line in file:
+                    name, phone_number = line.strip().split(',')
+                    phonebook[name] = phone_number
+        except FileNotFoundError:
+            pass
+        return phonebook
 
     def save_phonebook(self):
         with open(self.filename, 'w') as file:
-            json.dump(self.phonebook, file, indent=4)
+            for name, phone_number in self.phonebook.items():
+                file.write(f"{name},{phone_number}\n")
 
     def add_contact(self, name, phone_number):
         self.phonebook[name] = phone_number
